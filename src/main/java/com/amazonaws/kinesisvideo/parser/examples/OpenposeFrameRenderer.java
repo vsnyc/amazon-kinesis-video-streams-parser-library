@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import java.net.URLEncoder;
+
 import static org.jcodec.codecs.h264.H264Utils.splitMOVPacket;
 
 public class OpenposeFrameRenderer implements FrameVisitor.FrameProcessor {
@@ -56,7 +58,7 @@ public class OpenposeFrameRenderer implements FrameVisitor.FrameProcessor {
         //  Socket to talk to server
         ZMQ.Socket requester = context.socket(ZMQ.REQ);
         requester.connect("tcp://localhost:" + port);
-        requester.send(message.getBytes(), 0);
+        requester.send(URLEncoder.encode(message));
         String reply = new String(requester.recv());
         requester.close();
         return reply;
