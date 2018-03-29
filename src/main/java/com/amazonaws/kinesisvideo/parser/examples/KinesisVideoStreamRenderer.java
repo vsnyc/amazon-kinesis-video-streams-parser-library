@@ -1,5 +1,7 @@
 package com.amazonaws.kinesisvideo.parser.examples;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.kinesisvideo.parser.ebml.InputStreamParserByteSource;
@@ -15,6 +17,7 @@ import com.amazonaws.services.kinesisvideo.AmazonKinesisVideoMediaClient;
 import com.amazonaws.services.kinesisvideo.model.*;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class KinesisVideoStreamRenderer {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(KinesisVideoStreamRenderer.class);
@@ -24,8 +27,16 @@ public class KinesisVideoStreamRenderer {
 
     public static void main(String[] args) {
 
+        AWSCredentialsProvider credentialsProvider;
+
+        if (Objects.equals(System.getProperty("app.runMode"), "local")) {
+            credentialsProvider = new ProfileCredentialsProvider();
+        } else {
+            credentialsProvider = InstanceProfileCredentialsProvider.getInstance();
+        }
+
         AmazonKinesisVideo client = AmazonKinesisVideoClientBuilder.standard()
-                .withCredentials(new ProfileCredentialsProvider())
+                .withCredentials(credentialsProvider)
                 .withRegion(Regions.US_WEST_2)
                 .build();
 
@@ -34,7 +45,7 @@ public class KinesisVideoStreamRenderer {
         System.out.println("GetMedia endpoint " + getMediaEndpoint);
 
         AmazonKinesisVideoMedia mediaClient = AmazonKinesisVideoMediaClient.builder()
-                .withCredentials(new ProfileCredentialsProvider())
+                .withCredentials(credentialsProvider)
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(getMediaEndpoint,
                         Regions.US_WEST_2.getName()))
                 .build();
