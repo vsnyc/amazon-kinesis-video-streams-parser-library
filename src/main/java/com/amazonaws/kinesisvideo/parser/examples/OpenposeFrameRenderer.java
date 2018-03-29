@@ -95,7 +95,7 @@ public class OpenposeFrameRenderer implements FrameVisitor.FrameProcessor {
 
             try {
                 String fileName = "image" + dateFormat.format(new Date());
-                ImageIO.write(renderImage, "png", new File(SRC_IMAGES_DIR + fileName));
+                ImageIO.write(renderImage, "png", new File(SRC_IMAGES_DIR + fileName + ".png"));
                 String reply = messageZeroMQ(fileName + ".png", ZEROMQ_PORT);
                 System.out.println(reply);
                 if (reply != null && reply.contains("Done")) {
