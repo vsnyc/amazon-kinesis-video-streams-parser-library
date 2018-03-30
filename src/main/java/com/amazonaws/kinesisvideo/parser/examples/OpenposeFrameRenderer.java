@@ -58,7 +58,7 @@ public class OpenposeFrameRenderer implements FrameVisitor.FrameProcessor {
         //  Socket to talk to server
         ZMQ.Socket requester = context.socket(ZMQ.REQ);
         requester.connect("tcp://localhost:" + port);
-        requester.send(URLEncoder.encode(message));
+        requester.send(message + "\0");
         String reply = new String(requester.recv());
         requester.close();
         return reply;
