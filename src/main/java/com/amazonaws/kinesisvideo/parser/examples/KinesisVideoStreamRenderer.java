@@ -74,7 +74,12 @@ public class KinesisVideoStreamRenderer {
         );
         KinesisVideoFrameViewer kinesisVideoFrameViewer = new KinesisVideoFrameViewer(frameWidth, frameHeight);
         StreamingMkvReader mkvStreamReader = StreamingMkvReader.createDefault(new InputStreamParserByteSource(result.getPayload()));
-        FrameVisitor frameVisitor = FrameVisitor.create(OpenposeFrameRenderer.create(kinesisVideoFrameViewer));
+        FrameVisitor frameVisitor;
+        if (Objects.equals(System.getProperty("app.runMode"), "local")) {
+            frameVisitor = FrameVisitor.create(H264FrameRenderer.create(kinesisVideoFrameViewer));
+        } else {
+            frameVisitor = FrameVisitor.create(OpenposeFrameRenderer.create(kinesisVideoFrameViewer));
+        }
         try {
             mkvStreamReader.apply(frameVisitor);
         } catch (MkvElementVisitException e) {
